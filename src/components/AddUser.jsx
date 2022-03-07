@@ -3,34 +3,33 @@ import TextField from "@mui/material/TextField";
 import "./form.css";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addPassengers } from "../redux/actions/actions";
 
 function AddUser() {
-
-  const[state, setState] = useState({
-    name:'',
-    trips:'',
-    airlines:''
-  })
-
-  const[error, setError] = useState('');
-   
-  const {name, trips, airlines} = state;
+  let dispatch = useDispatch();
   let navigate = useNavigate();
-  const getBack = () => {
-    navigate("/");
+
+  const [state, setState] = useState({
+    name: "",
+    trips: "",
+    airline: "",
+  });
+
+ 
+
+  const handleInputChange = (e) => {
+    let { name, value } = e.target;
+    setState({ ...state, [name]: value });
   };
 
-  const handleInputChange = (e) =>{
-    let {name, value} = e.target;
-    setState({...state,[name]:value})
-  }
-
-  const handleSubmit = (e) =>{
-    e.preventDefault()
-    if(!name || !trips || !airlines){
-      setError('please Fill all details')
-    }
-  }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(state)
+    dispatch(addPassengers(state));
+    navigate("/");
+    setState({})
+  };
 
   return (
     <div>
@@ -42,9 +41,10 @@ function AddUser() {
           }}
           id="standard-basic"
           label="Name"
+          name = 'name'
           variant="standard"
-          type='text'
-          value={name}
+          type="text"
+          value={state.name}
           onChange={handleInputChange}
         />
         <TextField
@@ -53,9 +53,10 @@ function AddUser() {
           }}
           id="standard-basic"
           label="Trips"
+          name = 'trips'
           variant="standard"
-          type='number'
-          value={trips}
+          type="number"
+          value={state.trips}
           onChange={handleInputChange}
         />
         <TextField
@@ -64,20 +65,21 @@ function AddUser() {
           }}
           id="standard-basic"
           label="Airline"
+          name = 'airline'
           variant="standard"
-          type='number'
-          value={airlines}
+          type="number"
+          value={state.airline}
           onChange={handleInputChange}
         />
         <Button
           variant="contained"
-          onClick={getBack}
+          type="submit"
           sx={{
             marginTop: "15px",
             width: "100%",
           }}
         >
-          Back
+          submit
         </Button>
       </form>
     </div>

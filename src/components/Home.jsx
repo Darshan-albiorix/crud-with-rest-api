@@ -8,9 +8,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useDispatch, useSelector } from "react-redux";
-import { loadPassengers } from "../redux/actions/actions";
+import { deletePassengers, loadPassengers } from "../redux/actions/actions";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
+import { ButtonGroup } from "@mui/material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -42,6 +43,14 @@ function Home() {
     navigate("/adduser");
   };
 
+  const deleteUser =(id) =>{
+    dispatch(deletePassengers(id))
+  }
+
+  const updateUser = (id) =>{
+    navigate(`/updateuser/${id}`)
+  }
+
   useEffect(() => {
     dispatch(loadPassengers());
   }, []);
@@ -72,7 +81,8 @@ function Home() {
           </TableHead>
           <TableBody>
             {users.passengers.map((user) => (
-              <StyledTableRow key={user.id}>
+              <StyledTableRow key={user._id}>
+                {/* {console.log(user._id)} */}
                 <StyledTableCell component="th" scope="row">
                   {user.name}
                 </StyledTableCell>
@@ -83,7 +93,18 @@ function Home() {
                 <StyledTableCell align="left">
                   {user.airline[0].name}
                 </StyledTableCell>
-                {/* <StyledTableCell align="right"></StyledTableCell> */}
+                <StyledTableCell>
+                  <ButtonGroup
+                  sx={{
+                    alignItems:'center'
+                  }}
+                    variant="contained"
+                    aria-label="outlined button group"
+                  >
+                    <Button onClick={()=>deleteUser(user._id)}>Delete</Button>
+                    <Button onClick={()=>updateUser(user._id)}>update</Button>
+                  </ButtonGroup>
+                </StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>
