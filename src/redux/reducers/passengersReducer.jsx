@@ -2,6 +2,7 @@ const intialState = {
   passengers: [],
   airline: [],
   user: {},
+  passengerData:[]
 };
 
 const getPassengerReducer = (state = intialState, { type, payload }) => {
@@ -11,8 +12,11 @@ const getPassengerReducer = (state = intialState, { type, payload }) => {
         ...state,
         passengers: payload,
       };
+    case "GET_PAGE_DATA":
+      return {
+        ...state, passengerData:payload
+      };
     case "GET_AIRLINE":
-      console.log(payload);
       return { ...state, airline: payload };
     case "GET_SINGLE_USER":
       return { ...state, user: payload };

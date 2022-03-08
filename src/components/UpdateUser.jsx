@@ -20,16 +20,20 @@ function UpdateUser() {
   let navigate = useNavigate();
 
   let { id } = useParams();
-  let user = useSelector((state)=>state.passengers);
+  let {user} = useSelector((state)=>state.passengers);
   const [state, setState] = useState({
     name: "",
     trips: "",
-    airline: `${user.user.airline}`,
+    airline: '',
   });
 
-  console.log('user', user)
+  const userData = {
+    name: user.name,
+    trips: user.trips,
+    airline: user.airline && user.airline[0].id
+  }
+
   let { airline } = useSelector((state) => state.passengers);
-  console.log('airline', airline)
 
   useEffect(() => {
     dispatch(fetchAirline())
@@ -37,11 +41,10 @@ function UpdateUser() {
   }, []);
 
   useEffect(()=>{
-    if(user.user){
-      setState({...user.user})
+    if(user){
+      setState({...userData})
     }
   }, [user])
-  console.log("airline", airline);
    
   const handleInputChange = (e) => {
     let { name, value } = e.target;
@@ -50,7 +53,6 @@ function UpdateUser() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(state);
     dispatch(updateUser(state, id));
     navigate("/");
     setState({});

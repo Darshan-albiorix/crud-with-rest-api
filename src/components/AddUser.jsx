@@ -25,7 +25,6 @@ function AddUser() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(state)
     dispatch(addPassengers(state));
     navigate("/");
     setState({})

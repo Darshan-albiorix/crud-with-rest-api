@@ -40,17 +40,35 @@ const userUpdated = () => {
     type: "UPDATE_USER",
   };
 };
+const stringifyData = (stringyData) => {
+  return {
+    type: "GET_PAGE_DATA",
+    payload: stringyData,
+  };
+};
 
 export const loadPassengers = () => {
   return function (dispatch) {
     axios
       .get(`${baseUrl}/passenger`)
       .then((resp) => {
-        dispatch(getPassengers(resp.data.data.splice(0,10)));
+        dispatch(getPassengers(resp.data.data));
       })
       .catch((error) => console.log(error));
   };
 };
+
+export const getStringifyData = (stringified) => {
+  return function (dispatch) {
+    axios
+      .get(`${baseUrl}/passenger?${stringified}`)
+      .then((resp) => {
+        dispatch(stringifyData(resp.data.data));
+      })
+      .catch((error) => console.log(error));
+  };
+};
+
 
 export const deletePassengers = (id) => {
   return function (dispatch) {

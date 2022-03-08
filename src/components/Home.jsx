@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -8,10 +8,13 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useDispatch, useSelector } from "react-redux";
-import { deletePassengers, loadPassengers } from "../redux/actions/actions";
+import { deletePassengers, getStringifyData, loadPassengers } from "../redux/actions/actions";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import { ButtonGroup } from "@mui/material";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
+import querySting from "query-string";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -36,24 +39,39 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 function Home() {
   const dispatch = useDispatch();
   let navigate = useNavigate();
+  const [page, setPage] = useState(1);
   const users = useSelector((state) => state.passengers);
-  console.log(users.passengers);
+
+
+  const parsed = { page: page, size: 10 };
+  const stringified = querySting.stringify(parsed);
+
+  const pageHandler = (e) => {
+    setPage(e.target.textContent);
+  };
 
   const getNavigate = () => {
     navigate("/adduser");
   };
 
-  const deleteUser =(id) =>{
-    dispatch(deletePassengers(id))
-  }
+  const deleteUser = (id) => {
+    dispatch(deletePassengers(id));
+  };
 
-  const updateUser = (id) =>{
-    navigate(`/updateuser/${id}`)
-  }
+  const updateUser = (id) => {
+    navigate(`/updateuser/${id}`);
+  };
+
+  useEffect(()=>{
+    dispatch(getStringifyData(stringified))
+  }, [parsed.page, dispatch])
 
   useEffect(() => {
     dispatch(loadPassengers());
   }, []);
+
+  const totalPage = Math.floor(users.passengers.length / 10);
+
 
   return (
     <div>
@@ -80,9 +98,8 @@ function Home() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.passengers.map((user) => (
+            {users.passengerData.map((user) => (
               <StyledTableRow key={user._id}>
-                {/* {console.log(user._id)} */}
                 <StyledTableCell component="th" scope="row">
                   {user.name}
                 </StyledTableCell>
@@ -95,14 +112,14 @@ function Home() {
                 </StyledTableCell>
                 <StyledTableCell>
                   <ButtonGroup
-                  sx={{
-                    alignItems:'center'
-                  }}
+                    sx={{
+                      alignItems: "center",
+                    }}
                     variant="contained"
                     aria-label="outlined button group"
                   >
-                    <Button onClick={()=>deleteUser(user._id)}>Delete</Button>
-                    <Button onClick={()=>updateUser(user._id)}>update</Button>
+                    <Button onClick={() => deleteUser(user._id)}>Delete</Button>
+                    <Button onClick={() => updateUser(user._id)}>update</Button>
                   </ButtonGroup>
                 </StyledTableCell>
               </StyledTableRow>
@@ -110,6 +127,13 @@ function Home() {
           </TableBody>
         </Table>
       </TableContainer>
+      <Stack spacing={2}>
+        <Pagination
+          count={totalPage}
+          color="primary"
+          onClick={(e) => pageHandler(e)}
+        />
+      </Stack>
     </div>
   );
 }
